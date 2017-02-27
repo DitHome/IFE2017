@@ -30,15 +30,26 @@
             var right_in = document.getElementById("right-in");
             var left_out = document.getElementById("left-out");
             var right_out = document.getElementById("right-out");
+            var reg = /^[0-9]+\.?[0-9]*$/;
             span_box = document.getElementById("spanBox");
             input_text = document.getElementById("input-text");
 
             left_in.onclick = function () {
-                add("left");
+                if(reg.test(input_text.value)){  // input check
+                    add("left");
+                }
+                else{
+                    alert("Please input number");
+                }
             };
 
             right_in.onclick = function () {
-                add("right");
+                if(reg.test(input_text.value)){  // input check
+                    add("right");
+                }
+                else{
+                    alert("Please input number");
+                }
             };
 
             left_out.onclick = function () {
