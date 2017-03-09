@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>IFE JavaScript Task 05</title>
+    <style type="text/css">
+        span {
+            display: inline-block;
+            width: 2px;
+            margin: 2px;
+            background-color: red;
+            text-align: center;
+            line-height: 50px;
+        }
+		#spanBox {
+			margin-top: 100px; 
+		}
+    </style>
+</head>
+<body>
+
+    <label><input id="input-text" type="text"></label>
+    <button id="left-in">左侧入</button>
+    <button id="right-in">右侧入</button>
+    <button id="left-out">左侧出</button>
+    <button id="right-out">右测出</button>
+	<button id="sort">排序</button>
+    <div id="spanBox"></div>
+    <script type="text/javascript">
+        (function () {
+            var left_in = document.getElementById("left-in");
+            var right_in = document.getElementById("right-in");
+            var left_out = document.getElementById("left-out");
+            var right_out = document.getElementById("right-out");
+            var reg = /^(?:[1-9]\d|100)$/;
+			stateArr = []; // save change state
+			tmpColor = []; // 当前交换元素——颜色控制
+            span_box = document.getElementById("spanBox");
+			sp = span_box.getElementsByTagName("span");
+            input_text = document.getElementById("input-text");
+            left_in.onclick = function () {
+                if(reg.test(input_text.value)){  // input check
+                    add("left");
+                }
+                else{
+                    alert("Please input number 10-100");
+                }
+            };
+            right_in.onclick = function () {
+                if(reg.test(input_text.value)){  // input check
+                    add("right");
+                }
+                else{
+                    alert("Please input number 10-100");
+                }
+            };
+            left_out.onclick = function () {
+                del("left");
+            };
+            right_out.onclick = function () {
+                del("right");
+            };
+			sort.onclick = function(){
+				sortDESC();
+			}
+        })();
+        /**
+         *  create Span
+         *  @param value
+         */
+        function createSpan(value) {
+            var sp = document.createElement("span");
+			sp.style.height = value + "px";
+            return sp;
+        }
+        /**
+         * appendTo spanBox
+         * @param type left or right
+         */
+        function add(type) {
+            var sp = createSpan(input_text.value);
+            if(type == "left"){
+                span_box.insertBefore(sp,span_box.childNodes[0]);
+            }
+            else{
+                span_box.appendChild(sp);
+            }
+            // span click event
+            sp.onclick = function () {
+                alert(parseInt(this.style.height));
+                span_box.removeChild(this);
+            }
+        }
+        /**
+         * delete Span
+         * @param type left or right
+         */
+        function del(type) {
+			if(span_box.childNodes[0] == null){
+				alert("Please input number");
+				return;
+			}
+            if(type == "left"){
+                alert(parseInt(span_box.childNodes[0].style.height));
+                span_box.removeChild(span_box.childNodes[0])
+            }
+            else {
+                alert(parseInt(span_box.lastChild.style.height));
+                span_box.removeChild(span_box.lastChild)
+            }
+        }
+		/**
+	     * sort DESC
+		 *
+		 */
+		function sortDESC() {
+			var initArr= [];
+			var tempArr= [];			
+			
+			for(var i=0; i<sp.length; i++){
+				initArr[i] =  parseInt(sp[i].style.height);
+			}
+			
+			for(var i=0; i<initArr.length-1; i++){
+				for(var j=i+1; j<initArr.length; j++){				
+					if(initArr[i] < initArr[j]){
+						var tmp = initArr[i];
+						initArr[i] = initArr[j];
+						initArr[j] = tmp;
+						// tmpArr 记录一次需要交换的数据
+						tempArr[0] = i;
+						tempArr[1] = j;						
+						stateArr.push(tempArr.slice(0)); // slice（）返回一个新的数组						
+					}				
+				}
+			}
+			
+			time = setInterval(exchange,100);			
+		}
+		
+		/**
+		 * exchange element height		
+		 */
+		function exchange(){
+			var arr = stateArr.shift() || [];			
+			var tmp = null;
+			
+			if(tmpColor == null || tmpColor.length == 0){
+				tmpColor = arr.slice(0);
+			}			
+			if(tmpColor != null && tmpColor.length != 0){
+				sp[tmpColor[0]].style.backgroundColor = "red";
+				sp[tmpColor[1]].style.backgroundColor = "red";
+				tmpColor = arr.slice(0);
+			}
+			
+			
+			if(arr != null && arr.length != 0){				
+				tmp = sp[arr[0]].style.height;
+				sp[arr[0]].style.height = sp[arr[1]].style.height;
+				sp[arr[1]].style.height = tmp;	
+				sp[arr[0]].style.backgroundColor = "blue";
+				sp[arr[1]].style.backgroundColor = "blue";	
+			}else{
+				clearInterval(time);
+			}			
+		}
+    </script>
+</body>
+</html>
